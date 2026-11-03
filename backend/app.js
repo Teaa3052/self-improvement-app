@@ -1,6 +1,7 @@
 import cors from 'cors'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import path from 'path'
 import express from 'express' // učitava express modul - to je biblioteka koja olakšava izradu web servera u Node.js
 import { config } from './config.js' // port, CORS origin i ostale postavke iz .env
 import authRoutes from './routes/auth.js'
@@ -25,6 +26,12 @@ app.use(express.json()) // čita JSON podatke i pretvara u JS objekte
 
 app.use(cookieParser()) // čita cookieje iz zahtjeva u objekt req.cookies (npr. req.cookies.token)
 
+// u produkciji Express servira i frontend: datoteke koje je napravio `vite build` (JS, CSS, slike, index.html)
+const frontendDist = path.join(import.meta.dirname, '../frontend/dist')
+if (config.isProduction) {
+    app.use(express.static(frontendDist))
+}
+
 app.get('/', (req, res) =>  {
     // Definira rutu: kada netko pošalje GET zahtjev na root URL ('/'), poziva se ova funkcija (tzv. callback)
     // 'req' = zahtjev koji dolazi od klijenta (npr. preglednika)
@@ -36,6 +43,14 @@ app.get('/', (req, res) =>  {
 app.use("/api/auth", authRoutes)
 app.use("/api/habits", habitRoutes)
 app.use("/api/stats", statsRoutes) // statistika navika za zadnjih 30 dana
+
+// adrese stranica (npr. /stats) rješava React Router u pregledniku, pa za njih šaljemo index.html
+// sve što počinje s /api ostaje backendu: nepostojeća API ruta i dalje dobije 404 JSON
+if (config.isProduction) {
+    app.get(/^(?!\/api(\/|$))/, (req, res) => {
+        res.sendFile('index.html', { root: frontendDist })
+    })
+}
 
 // ova dva moraju biti NAKON svih ruta: zahtjev do njih dođe samo ako ga nijedna ruta nije obradila
 app.use(notFound) // nepostojeća ruta -> 404 JSON

@@ -75,8 +75,9 @@ Okvirni datumi su za orijentaciju. Ako kasnimo više od dan-dva, ubrzavamo (Clau
 
 ### Online (do 31. 10.)
 
-- [ ] Računi: Neon (baza) i Render (server) — otvara Tea
-- [ ] Express servira i frontend (jedna adresa za sve)
+- [x] Neon (baza): račun, povezivanje, migracije na produkcijskoj bazi
+- [x] Render (server): račun — otvara Tea
+- [x] Express servira i frontend (jedna adresa za sve)
 - [ ] Deploy, migracije na produkcijskoj bazi, provjera s mobitela
 
 ### Nakon 1. 11. (iz prvotnog plana faze 1)
