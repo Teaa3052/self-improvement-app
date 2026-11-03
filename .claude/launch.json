@@ -8,6 +8,12 @@
       "port": 3000
     },
     {
+      "name": "backend-neon",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "backend", "run", "dev:neon"],
+      "port": 3000
+    },
+    {
       "name": "frontend",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "frontend", "run", "dev"],

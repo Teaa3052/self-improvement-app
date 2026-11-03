@@ -8,6 +8,11 @@ const pool = new Pool({
     connectionString: config.databaseUrl
 })
 
+// veza koja miruje u poolu može puknuti (npr. kad se Neon uspava); bez ovoga bi takva greška srušila cijeli server
+pool.on('error', (err) => {
+    console.error('Idle database connection error:', err.message)
+})
+
 
 // funkcija koja testira vezu s bazom
 async function testConnection() {

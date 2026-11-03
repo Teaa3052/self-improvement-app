@@ -7,8 +7,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch app.js",
+    "dev:neon": "node --env-file=../.env.local --watch app.js",
     "start": "node app.js",
-    "migrate": "node-pg-migrate"
+    "migrate": "node-pg-migrate",
+    "migrate:neon": "node --env-file=../.env.local node_modules/node-pg-migrate/bin/node-pg-migrate.js -d DATABASE_URL_UNPOOLED"
   },
   "repository": {
     "type": "git",
