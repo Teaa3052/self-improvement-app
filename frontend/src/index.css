@@ -9,6 +9,11 @@
     --font-heading: var(--font-sans);
     --font-sans: 'Inter Variable', sans-serif;
     --color-habit: var(--habit); /* boja navika: klase bg-habit, text-habit, bg-habit/15 (prozirnija) */
+    --color-paper: #F6F6F4; /* topla svijetla pozadina: prijava, registracija, dio početne stranice */
+    --color-phone: #F3F3F1; /* pozadina Dashboarda na mobitelu */
+    --color-hairline: #EDEDED; /* tanke crte između dijelova kartice, aktivna stavka izbornika */
+    --color-subtle: #6B6B6B; /* sporedni sivi tekst, tamniji od muted-foreground da se bolje čita */
+    --color-body: #525252; /* tekst odlomaka */
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -51,7 +56,7 @@
 
 :root {
     --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
+    --foreground: #171717; /* boja teksta iz mockupa */
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
     --popover: oklch(1 0 0);

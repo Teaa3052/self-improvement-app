@@ -1,21 +1,17 @@
 import { Outlet } from "react-router-dom"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 
 // Zajednički izgled svih zaštićenih stranica: sidebar lijevo, sadržaj stranice desno.
-// <Outlet /> je mjesto gdje React Router ubaci trenutnu stranicu (Dashboard, Habits...)
+// <Outlet /> je mjesto gdje React Router ubaci trenutnu stranicu (Dashboard, Stats...)
+// Razmak oko sadržaja i gornju traku na mobitelu (MobileHeader) daje svaka stranica sama,
+// jer Dashboard na mobitelu ima drugačiji izgled.
 function AppLayout() {
     return (
-        <SidebarProvider>
+        <SidebarProvider style={{ "--sidebar-width": "220px" }}>
             <AppSidebar />
-            <SidebarInset>
-                {/* gornja traka s gumbom za sidebar (na mobitelu otvara izbornik) */}
-                <header className="flex h-14 items-center border-b px-4">
-                    <SidebarTrigger />
-                </header>
-                <div className="p-6">
-                    <Outlet />
-                </div>
+            <SidebarInset className="min-w-0">
+                <Outlet />
             </SidebarInset>
         </SidebarProvider>
     )

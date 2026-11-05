@@ -3,7 +3,7 @@ import { periodStart } from "@/utils/calendar"
 import ArchiveHabitDialog from "@/components/ArchiveHabitDialog"
 
 // red tjedne ili mjesečne navike: ime + kvadratić za svaki period
-// periods = monthWeeks(today) ili thisMonth(today), today = današnji datum, onToggle(date, isDone) = klik
+// periods = monthWeeks(month, today) ili monthPeriod(month, today), today = današnji datum, onToggle(date, isDone) = klik
 
 function PeriodRow({ habit, periods, today, onToggle, onArchive }) {
     // datum zapisa koji pada u period koji počinje sa start (ili undefined ako ga nema)
@@ -13,7 +13,7 @@ function PeriodRow({ habit, periods, today, onToggle, onArchive }) {
     return (
         <div className="flex flex-wrap items-end gap-x-4 gap-y-1">
             <div className="flex w-40 items-center gap-1">
-                <span className="truncate font-semibold leading-8">{habit.name}</span>
+                <span className="truncate text-[15px] font-semibold leading-8">{habit.name}</span>
                 <ArchiveHabitDialog habit={habit} onArchive={onArchive} />
             </div>
             <div className="flex">
@@ -33,7 +33,7 @@ function PeriodRow({ habit, periods, today, onToggle, onArchive }) {
                         // stupac: oznaka perioda iznad, prazan kvadratić ispod
                         <div key={period.start} className="flex flex-col items-center gap-1">
                             <span className={cn(
-                                "text-xs text-muted-foreground",
+                                "text-[11px] text-subtle",
                                 period.isCurrent && "font-semibold text-foreground underline decoration-2 underline-offset-2"
                             )}>
                                 {period.label} 
@@ -46,9 +46,9 @@ function PeriodRow({ habit, periods, today, onToggle, onArchive }) {
                                 aria-label={`${habit.name}, ${period.start}`}
                                 className={cn(
                                     "h-8 w-[38px]",
-                                    done ? "bg-habit" : "bg-habit/15",
-                                    done && roundLeft && "rounded-l-lg",
-                                    done && roundRight && "rounded-r-lg",
+                                    done ? "bg-habit" : "bg-habit/12",
+                                    done && roundLeft && "rounded-l-[8px]",
+                                    done && roundRight && "rounded-r-[8px]",
                                     !period.isFuture && "cursor-pointer"
                                 )}
                             />

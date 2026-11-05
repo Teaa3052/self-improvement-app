@@ -1,35 +1,34 @@
-import * as React from "react"
-import { useNavigate } from "react-router-dom"
-import { Home, ListChecks, BarChart3, LogOut, NotebookPen, Waypoints, Settings  } from "lucide-react"
-import { Link } from "react-router-dom"
+import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext";
+import { APP_NAME } from "@/lib/brand"
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar"
 
+// stranice koje već rade; ostale (Habits, Diary...) dodajemo ovdje kad ih napravimo
 const navItems = [
-  { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Habits", url: "/habits", icon: ListChecks },
-  { title: "Diary", url: "/diary", icon: NotebookPen },
-  { title: "Plans", url: "/plans", icon: Waypoints },
-  { title: "Stats", url: "/stats", icon: BarChart3 },
-  { title: "Settings", url: "/settings", icon: Settings }, 
+  { title: "Dashboard", url: "/dashboard" },
+  { title: "Stats", url: "/stats" },
 ]
+
+const itemClass = "h-10 rounded-lg px-3 font-medium text-neutral-700 data-active:bg-hairline data-active:font-semibold data-active:text-foreground"
 
 export function AppSidebar({ ...props }) {
   const navigate = useNavigate()
+  const { pathname } = useLocation() // trenutna adresa, da istaknemo aktivnu stavku
+  const { setOpenMobile } = useSidebar()
 
-  const { logout } = useAuth() // funckija za odjavu 
+  const { logout } = useAuth() // funckija za odjavu
 
   const handleLogout = async () => {
     await logout() // backend obriše cookie, a context zaboravi korisnika ( user = null )
@@ -38,35 +37,39 @@ export function AppSidebar({ ...props }) {
 
   return (
     <Sidebar {...props}>
-      <SidebarHeader>
-        <h2 className="text-lg font-bold px-2 py-1">Self improwment tool</h2>
+      <SidebarHeader className="px-3 pt-5 pb-0">
+        <div className="flex items-center gap-2.5 px-2 py-1">
+          <span aria-hidden="true" className="size-6 flex-none rounded-[7px] bg-habit" />
+          <span className="truncate text-[15px] font-bold">{APP_NAME}</span>
+        </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+        <SidebarGroup className="px-3 pt-4">
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link to={item.url}>
-                      <item.icon className="mr-2 h-4 w-4" />
+                  <SidebarMenuButton asChild isActive={pathname === item.url} className={itemClass}>
+                    {/* na mobitelu je izbornik preko cijelog ekrana, pa ga klik na stavku zatvori */}
+                    <Link to={item.url} onClick={() => setOpenMobile(false)}>
                       {item.title}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarRail />
+      <SidebarFooter className="px-3 pb-5">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleLogout} className={itemClass}>
+              Log out
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   )
 }

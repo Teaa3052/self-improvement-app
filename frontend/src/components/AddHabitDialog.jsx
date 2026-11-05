@@ -1,6 +1,7 @@
 import { useState } from "react"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -10,25 +11,44 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-function AddHabitDialog ({ onAddHabit }) {
+const FREQUENCIES = [
+    { value: "daily", label: "Daily" },
+    { value: "weekly", label: "Weekly" },
+    { value: "monthly", label: "Monthly" },
+]
+
+// children = gumb koji otvara dijalog; bez njega se prikaže crni gumb "Add habit" (mobitel daje svoj, ikonu +)
+function AddHabitDialog ({ onAddHabit, children }) {
     const [open, setOpen] = useState(false)
     const [name, setName] = useState("")
     const [frequency, setFrequency] = useState("daily")
+    const [nameError, setNameError] = useState(false)
     const [error, setError] = useState(null)
+
+    // kod zatvaranja (Save, Cancel, klik izvan dijaloga) sve vrati na početno, da se stara greška ne vidi idući put
+    const handleOpenChange = (nextOpen) => {
+        setOpen(nextOpen)
+        if (!nextOpen) {
+            setName("")
+            setFrequency("daily")
+            setNameError(false)
+            setError(null)
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if (!name.trim()) return
+        if (!name.trim()) {
+            setNameError(true)
+            return
+        }
 
         try {
             await onAddHabit({ name, frequency }) // cekaj da Dashboard spremi naviku na backend
             // ovo ispod izvrši samo ako je spremanje uspjelo
-            setName("")
-            setFrequency("daily")
-            setError(null)
-            setOpen(false)
+            handleOpenChange(false)
         } catch (err) {
             // spremanje nije uspjelo: dijalog ostaje otvoren i pokaže poruku
             setError(err.response?.data?.message || "Could not add habit")
@@ -36,48 +56,60 @@ function AddHabitDialog ({ onAddHabit }) {
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Habit
-                </Button>
+                {children ?? <Button className="h-10 rounded-[10px] px-[18px] font-semibold">Add habit</Button>}
             </DialogTrigger>
 
-            <DialogContent>
-                <form onSubmit={handleSubmit}>
+            <DialogContent showCloseButton={false} aria-describedby={undefined} className="rounded-2xl p-7 sm:max-w-[400px]">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-[22px]">
                     <DialogHeader>
-                        <DialogTitle>Add New Habit</DialogTitle>
+                        <DialogTitle className="text-xl font-bold">New habit</DialogTitle>
                     </DialogHeader>
 
-                    <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="name">Habit name</Label>
-                            <Input
-                                id="name"
-                                value={name}
-                                onChange = {(e) => setName(e.target.value)}
-                                placeholder="e.g. Morning run"
-                            />
-                        </div>
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor="name" className="font-semibold">Name</Label>
+                        <Input
+                            id="name"
+                            value={name}
+                            onChange = {(e) => {
+                                setName(e.target.value)
+                                setNameError(false)
+                            }}
+                            placeholder="e.g. Morning run"
+                            aria-invalid={nameError}
+                            className="h-[42px] rounded-[10px] border-neutral-300 px-3 text-[15px] shadow-none md:text-[15px]"
+                        />
+                        {nameError && <p className="text-[13px] text-red-700">Name is required</p>}
+                    </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="frequency">Frequency</Label>
-                            <select
-                                id="frequency"
-                                value={frequency}
-                                onChange={(e) => setFrequency(e.target.value)}
-                                className="w-full border rounded-md px-3 py-2 text-sm"
-                            >
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                            </select>
+                    <div className="flex flex-col gap-2">
+                        <p id="frequency-label" className="text-sm font-semibold">How often</p>
+                        {/* umjesto padajućeg izbornika tri gumba: odabrani je zelen */}
+                        <div role="group" aria-labelledby="frequency-label" className="grid grid-cols-3 gap-2">
+                            {FREQUENCIES.map(({ value, label }) => (
+                                <button
+                                    key={value}
+                                    type="button"
+                                    aria-pressed={frequency === value}
+                                    onClick={() => setFrequency(value)}
+                                    className={cn(
+                                        "h-[42px] cursor-pointer rounded-[10px] border text-sm font-semibold",
+                                        frequency === value ? "border-habit bg-habit text-white" : "border-neutral-300 bg-white"
+                                    )}
+                                >
+                                    {label}
+                                </button>
+                            ))}
                         </div>
                     </div>
+
                     { error && <p className="text-sm text-destructive">{error}</p>}
                     <DialogFooter>
-                        <Button type="submit">Save Habit</Button>
+                        <DialogClose asChild>
+                            <Button type="button" variant="ghost" className="h-10 rounded-[10px] px-4 font-semibold text-neutral-700">Cancel</Button>
+                        </DialogClose>
+                        <Button type="submit" className="h-10 rounded-[10px] px-[18px] font-semibold">Save habit</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

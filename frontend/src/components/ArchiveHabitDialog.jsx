@@ -14,7 +14,8 @@ import { Archive } from "lucide-react"
 
 // mala ikona pokraj imena navike; klik otvori potvrdu "Archive ...?"
 // habit = navika, onArchive() = Dashboard je arhivira na backendu i makne s popisa
-function ArchiveHabitDialog({ habit, onArchive }) {
+// children = gumb koji otvara potvrdu, ako ne želimo ikonu (na mobitelu je to cijelo ime navike)
+function ArchiveHabitDialog({ habit, onArchive, children }) {
     const [error, setError] = useState(null)
 
     const handleArchive = async () => {
@@ -29,22 +30,24 @@ function ArchiveHabitDialog({ habit, onArchive }) {
         // kod svakog otvaranja/zatvaranja makni staru poruku o grešci
         <Dialog onOpenChange={() => setError(null)}>
             <DialogTrigger asChild>
-                <Button variant="ghost" size="icon-xs" aria-label={`Archive ${habit.name}`} className="text-muted-foreground">
-                    <Archive />
-                </Button>
+                {children ?? (
+                    <Button variant="ghost" size="icon-xs" aria-label={`Archive ${habit.name}`} className="text-muted-foreground">
+                        <Archive />
+                    </Button>
+                )}
             </DialogTrigger>
 
-            <DialogContent showCloseButton={false}>
+            <DialogContent showCloseButton={false} className="gap-[22px] rounded-2xl p-7 sm:max-w-[400px]">
                 <DialogHeader>
-                    <DialogTitle>Archive “{habit.name}”?</DialogTitle>
-                    <DialogDescription>It leaves your dashboard. Its history is kept.</DialogDescription>
+                    <DialogTitle className="text-xl leading-snug font-bold">Archive “{habit.name}”?</DialogTitle>
+                    <DialogDescription className="leading-normal text-body">It leaves your dashboard. Its history is kept.</DialogDescription>
                 </DialogHeader>
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="ghost" className="h-10 rounded-[10px] px-4 font-semibold text-neutral-700">Cancel</Button>
                     </DialogClose>
-                    <Button variant="destructive" onClick={handleArchive}>Archive</Button>
+                    <Button onClick={handleArchive} className="h-10 rounded-[10px] px-[18px] font-semibold">Archive</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
