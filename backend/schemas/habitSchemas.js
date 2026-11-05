@@ -11,7 +11,8 @@ export const logParamsSchema = z.object ({
 })
 
 export const habitsQuerySchema = z.object ({
-    today: z.iso.date('Invalid date')
+    today: z.iso.date('Invalid date'),
+    from: z.iso.date('Invalid date').optional() // neobavezno: od kojeg datuma frontend treba zapise
 })
 
 export const habitParamsSchema = z.object ({
