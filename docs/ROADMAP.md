@@ -82,6 +82,7 @@ Okvirni datumi su za orijentaciju. Ako kasnimo više od dan-dva, ubrzavamo (Clau
 
 ### Nakon 1. 11. (iz prvotnog plana faze 1)
 
+- [x] README: navike, statistika, live link
 - [ ] Refaktor na TanStack Query (+ optimistično ažuriranje)
 - [ ] Stranica `/habits` (preimenovanje, popis arhiviranih)
 - [ ] Integracijski testovi (Vitest + supertest)

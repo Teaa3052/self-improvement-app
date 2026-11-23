@@ -1,6 +1,11 @@
 # Self-Improvement App
 
-A full-stack web application for personal growth: habits, journaling, plans and progress tracking.
+**Live demo:** [self-improvement-app-kqb0.onrender.com](https://self-improvement-app-kqb0.onrender.com) (free hosting, so the first load can take up to a minute)
+
+![Dashboard](docs/Dashboard.png)
+
+A full-stack web application for personal growth. It tracks daily, weekly and monthly habits with streaks and stats. A journal and plans are next.
+
 Built as a learning project. Progress is tracked in [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Tech Stack
@@ -19,7 +24,7 @@ Built as a learning project. Progress is tracked in [docs/ROADMAP.md](docs/ROADM
 │   ├── schemas/         # zod validation rules
 │   ├── controllers/     # request handling logic
 │   ├── models/          # SQL queries
-│   ├── utils/           # AppError
+│   ├── utils/           # AppError, date, streak and stats helpers
 │   ├── config.js        # the only place that reads .env
 │   ├── database.js      # PostgreSQL connection pool
 │   └── app.js           # Express app and middleware order
@@ -29,8 +34,10 @@ Built as a learning project. Progress is tracked in [docs/ROADMAP.md](docs/ROADM
 │       ├── context/     # AuthContext (who is logged in)
 │       ├── layouts/     # AppLayout (sidebar + page)
 │       ├── components/  # shared components (ui/ = shadcn)
+|       ├── hooks/       # use-mobile (is the screen narow)
+|       ├── lib/         # app name, shadcn helper
 │       ├── pages/       # one component per page
-│       └── utils/       # ProtectedRoutes
+│       └── utils/       # ProtectedRoutes, calendar and date helpers
 └── docs/
     └── ROADMAP.md
 ```
@@ -108,29 +115,45 @@ The frontend runs on `http://localhost:5173`.
 
 ## API
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| POST | `/api/auth/register` | no | Create an account (`email`, `password`, `nickname`) |
-| POST | `/api/auth/login` | no | Log in (`email`, `password`), sets the `token` cookie |
-| GET | `/api/auth/me` | yes | Current user |
-| POST | `/api/auth/logout` | no | Clear the `token` cookie |
+| Method | Path                                           | Auth | Description                                                                         |
+| ------ | ---------------------------------------------- | ---- | ----------------------------------------------------------------------------------- |
+| POST   | `/api/auth/register`                           | no   | Create an account (`email`, `password`, `nickname`)                                 |
+| POST   | `/api/auth/login`                              | no   | Log in (`email`, `password`), sets the `token` cookie                               |
+| GET    | `/api/auth/me`                                 | yes  | Current user                                                                        |
+| POST   | `/api/auth/logout`                             | no   | Clear the `token` cookie                                                            |
+| GET    | `/api/habits?today=YYYY-MM-DD&from=YYYY-MM-DD` | yes  | Active habits with streak, done-in-period status and log dates (`from` is optional) |
+| POST   | `/api/habits`                                  | yes  | Create a habit (`name`, `frequency`: daily, weekly or monthly)                      |
+| PUT    | `/api/habits/:id/logs/:date`                   | yes  | Mark a habit as done for that date                                                  |
+| DELETE | `/api/habits/:id/logs/:date`                   | yes  | Remove the mark for that date                                                       |
+| DELETE | `/api/habits/:id`                              | yes  | Archive a habit (history is kept)                                                   |
+| GET    | `/api/stats?today=YYYY-MM-DD`                  | yes  | Stats for the last 30 days: summary and per-habit results                           |
 
 All errors are returned as JSON: `{ "message": "...", "errors": [{ "field": "...", "message": "..." }] }` (`errors` only for validation errors).
 
 ## Features
 
 **Done**
+
 - Registration and login with validation on both frontend and backend
 - Cookie-based JWT authentication, protected routes, logout
+- Landing page with an interactive demo (try the habit grid without an account)
+- Daily, weekly and monthly habits
+- Dashboard with a monthly calendar for each daily habit and a period grid for weekly and monthly ones, with month navigation
+- Check off and uncheck any day or period, including past ones
+- Streaks for daily habits
+- Archiving habits (history is kept)
+- Stats for the last 30 days: summary, completion rate per habit, best streak, day grid for daily habits
+- Separate mobile dashboard (last 5 days, weeks and months, progress ring)
 - App layout with sidebar, 404 page
 
 **Planned**
-- Habit tracking (daily, weekly, monthly) with streaks and statistics
+
+- Habits page: rename habits, list of archived habits
 - Journal with notebooks, images and video
 - Plans and goals with steps
 - Calendar
 - Selective sharing with other users
-- Mobile support (installable PWA)
+- Installable PWA
 
 ## Author
 
