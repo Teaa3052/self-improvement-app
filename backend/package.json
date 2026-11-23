@@ -5,11 +5,13 @@
   "description": "REST API for the self-improvement app (Express + PostgreSQL)",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "dev": "node --watch server.js",
     "dev:neon": "node --env-file=../.env.local --watch server.js",
     "start": "node server.js",
     "migrate": "node-pg-migrate",
+    "migrate:test": "node --env-file=.env.test node_modules/node-pg-migrate/bin/node-pg-migrate.js",
     "migrate:neon": "node --env-file=../.env.local node_modules/node-pg-migrate/bin/node-pg-migrate.js -d DATABASE_URL_UNPOOLED"
   },
   "repository": {
@@ -34,5 +36,9 @@
     "pg": "^8.16.3",
     "zod": "^4.6.7"
   },
-  "keywords": []
+  "keywords": [],
+  "devDependencies": {
+    "supertest": "^7.3.2",
+    "vitest": "^5.1.1"
+  }
 }

@@ -27,8 +27,9 @@ Built as a learning project. Progress is tracked in [docs/ROADMAP.md](docs/ROADM
 │   ├── utils/           # AppError, date, streak and stats helpers
 │   ├── config.js        # the only place that reads .env
 │   ├── database.js      # PostgreSQL connection pool
-│   └── app.js           # Express app and middleware order
-│   └── server.js       # starts the server (listen)
+│   ├── tests/           # Vitest + supertest tests (separate test database)
+│   ├── app.js           # Express app and middleware order
+│   └── server.js        # starts the server (listen)
 ├── frontend/
 │   └── src/
 │       ├── api/         # axios client
@@ -105,6 +106,25 @@ npm run dev
 ```
 
 The frontend runs on `http://localhost:5173`.
+
+### 4. Tests
+
+Tests run against a separate database, because every test starts by emptying the tables.
+Create it as an admin user, next to the dev database:
+
+```sql
+CREATE DATABASE selfimprovement_test OWNER selfimprovement_app;
+```
+
+Copy `backend/.env.test.example` to `backend/.env.test` and fill in the password, then:
+
+```bash
+cd backend
+npm run migrate:test up
+npm test
+```
+
+`npm run test:watch` reruns the tests on every file change.
 
 ## Authentication Flow
 
