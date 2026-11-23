@@ -56,9 +56,4 @@ if (config.isProduction) {
 app.use(notFound) // nepostojeća ruta -> 404 JSON
 app.use(errorHandler) // bilo koja greška -> uredan JSON odgovor
 
-app.listen(config.port, () => {
-    // Pokreće server da sluša zahtjeve na odabranom portu
-    console.log(`Working on ${config.port}`)
-    // Ispisuje poruku u konzolu da server radi
-})
-
+export default app // server.js i testovi uvoze app odavde 

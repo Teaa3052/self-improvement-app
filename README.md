@@ -28,6 +28,7 @@ Built as a learning project. Progress is tracked in [docs/ROADMAP.md](docs/ROADM
 │   ├── config.js        # the only place that reads .env
 │   ├── database.js      # PostgreSQL connection pool
 │   └── app.js           # Express app and middleware order
+│   └── server.js       # starts the server (listen)
 ├── frontend/
 │   └── src/
 │       ├── api/         # axios client

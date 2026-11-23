@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "description": "REST API for the self-improvement app (Express + PostgreSQL)",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch app.js",
-    "dev:neon": "node --env-file=../.env.local --watch app.js",
-    "start": "node app.js",
+    "dev": "node --watch server.js",
+    "dev:neon": "node --env-file=../.env.local --watch server.js",
+    "start": "node server.js",
     "migrate": "node-pg-migrate",
     "migrate:neon": "node --env-file=../.env.local node_modules/node-pg-migrate/bin/node-pg-migrate.js -d DATABASE_URL_UNPOOLED"
   },
