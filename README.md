@@ -34,8 +34,8 @@ Built as a learning project. Progress is tracked in [docs/ROADMAP.md](docs/ROADM
 │       ├── context/     # AuthContext (who is logged in)
 │       ├── layouts/     # AppLayout (sidebar + page)
 │       ├── components/  # shared components (ui/ = shadcn)
-|       ├── hooks/       # use-mobile (is the screen narow)
-|       ├── lib/         # app name, shadcn helper
+│       ├── hooks/       # use-mobile (is the screen narrow)
+│       ├── lib/         # app name, shadcn helper
 │       ├── pages/       # one component per page
 │       └── utils/       # ProtectedRoutes, calendar and date helpers
 └── docs/
