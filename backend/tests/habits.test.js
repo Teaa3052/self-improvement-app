@@ -88,10 +88,92 @@ describe('habits', () => {
         expect(res.body.habits[0].name).toBe('Read')
     })
 
-    it('reguire login', async () => {
+    it('reguires login', async () => {
         const res = await request(app)
             .get('/api/habits?today=2026-11-24')
 
         expect(res.status).toBe(401)
+    })
+
+    it('marks a habit as done', async () => {
+        // napravi naviku i zapamti njezin id
+        const created = await agent
+            .post('/api/habits')
+            .send({ name: 'Read', frequency: 'daily' })
+            .expect(201)
+        const id = created.body.habit.id
+
+        // označi je za 24.11.2026.
+        await agent
+            .put(`/api/habits/${id}/logs/2026-11-24`) // backtickove `` koristim kad u adresu trebam ubaciti vrijednost varijable; tako da se odmah vidi gdje je varijabla 
+            .expect(204)
+
+        // popis za taj dan - navika mora biti označena 
+        const res = await agent.get('/api/habits?today=2026-11-24')
+
+        expect(res.body.habits[0].doneInPeriod).toBe(true)
+    })
+
+    it('unmarks a habit', async () => {
+        const created = await agent
+            .post('/api/habits')
+            .send({ name: 'Read', frequency: 'daily' })
+            .expect(201)
+        const id = created.body.habit.id
+
+        await agent
+            .put(`/api/habits/${id}/logs/2026-11-24`)
+            .expect(204)
+        // obriši oznaku
+        await agent
+            .delete(`/api/habits/${id}/logs/2026-11-24`)
+            .expect(204) 
+
+        // popis za taj dan - navika ne smije biti označena
+        const res = await agent.get('/api/habits?today=2026-11-24')
+
+        expect(res.body.habits[0].doneInPeriod).toBe(false)
+    })
+
+    it('archives a habit', async () => {
+        const created = await agent
+            .post('/api/habits')
+            .send({ name: 'Read', frequency: 'daily'})
+            .expect(201)
+        const id = created.body.habit.id
+
+        // arhiviraj naviku s tim id-om
+        await agent
+            .delete(`/api/habits/${id}`)
+            .expect(204)
+
+        // popis mora biti prazan
+        const res = await agent.get('/api/habits?today=2026-11-24')
+        expect(res.body.habits).toHaveLength(0)
+    })
+
+    it('does not let another user mark my habit', async () => {
+        const created = await agent
+            .post('/api/habits')
+            .send({ name: 'Read', frequency: 'daily'})
+            .expect(201)
+        const id = created.body.habit.id 
+
+        await request(app)
+            .post('/api/auth/register')
+            .send({ email: 'other@example.com', password: '123456789', nickname: 'other' })
+            .expect(201)
+        
+        const otherAgent = request.agent(app) // drugi korisnik dobije svoj "preglednik" i prijavi se u njemu
+
+        await otherAgent
+            .post('/api/auth/login')
+            .send({ email: 'other@example.com', password: '123456789'})
+            .expect(200)
+
+        // Drugi korisnik pokušava označit moju naviku - mora dobiti 404
+        const res = await otherAgent.put(`/api/habits/${id}/logs/2026-11-24`)
+        expect(res.status).toBe(404)
+        expect(res.body.message).toBe('Habit not found')
     })
 })
